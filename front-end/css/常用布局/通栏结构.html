@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>通栏结构</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .banner, .main, .footer-inner, .top-inner {
+            width: 900px;
+            text-align: center;
+            margin: 0 auto;
+        }
+
+        .top, .top-inner {
+            height: 50px;
+        }
+
+        .top {
+            background-color: powderblue;
+            margin-top: 0;
+        }
+
+        .top-inner {
+            background-color: purple;
+            line-height: 50px;
+        }
+
+        .banner {
+            height: 120px;
+            background-color: chartreuse;
+            margin: 2px auto;
+            line-height: 120px;
+        }
+
+        .main {
+            height: 800px;
+            background-color: white;
+        }
+
+        .main ul li {
+            list-style: none;
+            width: 223px;
+            text-align: center;
+        }
+
+        .main-top li {
+            height: 198px;
+            float: left;
+            margin-bottom: 2px;
+        }
+
+        .one {
+            background-color: mediumpurple;
+            margin-left: 2px;
+        }
+
+        .two {
+            background-color: orangered;
+            margin-left: 2px;
+        }
+
+        .three {
+            background-color: #2826e6;
+            margin-left: 2px;
+        }
+
+        .four {
+            background-color: green;
+        }
+
+        .main .four {
+            float: right;
+        }
+
+        .main-bottom li {
+            height: 600px;
+            float: left;
+        }
+
+        .footer {
+            height: 120px;
+            background-color: black;
+            color: #eeeeee; /*字体颜色*/
+            margin-top: 2px;
+            line-height: 120px;
+            margin-bottom: 0;
+        }
+
+        .footer-inner {
+            background-color: chartreuse;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+<div class="top">
+    <div class="top-inner">Top</div>
+</div>
+<div class="banner">Banner</div>
+<div class="main">
+    <ul class="main-top">
+        <li class="one">Main Top1</li>
+        <li class="two">Main Top2</li>
+        <li class="three">Main Top3</li>
+        <li class="four">Main Top4</li>
+    </ul>
+    <ul class="main-bottom">
+        <li class="one">Main Bottom1</li>
+        <li class="two">Main Bottom2</li>
+        <li class="three">Main Bottom3</li>
+        <li class="four">Main Bottom4</li>
+    </ul>
+</div>
+<div class=" footer">
+    <div class="footer-inner">Footer Inner</div>
+</div>
+</body>
+</html>

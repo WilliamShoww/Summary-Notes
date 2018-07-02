@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>左右型结构</title>
+    <style>
+        .header, .banner, .main, .footer {
+            width: 900px;
+            text-align: center;
+            margin: 0 auto;
+        }
+
+        .header {
+            height: 150px;
+            background-color: saddlebrown;
+        }
+
+        .banner {
+            height: 120px;
+            background-color: chartreuse;
+            margin: 2px auto;
+        }
+
+        .main {
+            height: 800px;
+            background-color: white;
+        }
+
+        /*.left {
+            width: 269px;
+            height: 800px;
+            background-color: green;
+            float: left;
+            margin-right: 2px; !*会挤压右边的盒子，导致右边的盒子被挤压到下方显示，所以特殊处理*!
+        }
+
+        .right {
+            width: 629px;
+            height: 800px;
+            background-color: orange;
+            float: left;
+        }*/
+
+        .left {
+            width: 268px;
+            height: 800px;
+            background-color: green;
+            float: left;
+        }
+
+        .right {
+            width: 630px;
+            height: 800px;
+            background-color: orange;
+            float: right;
+        }
+
+        .footer {
+            height: 120px;
+            background-color: black;
+            color: #eeeeee; /*字体颜色*/
+            margin-top: 2px;
+        }
+    </style>
+</head>
+<body>
+<div class="header">Header</div>
+<div class="banner">Banner</div>
+<div class="main">
+    <div class="left">Left</div>
+    <div class="right">Right</div>
+</div>
+<div class="footer">Footer</div>
+</body>
+</html>
