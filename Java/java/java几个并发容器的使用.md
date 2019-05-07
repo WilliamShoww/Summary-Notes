@@ -263,4 +263,78 @@ public static void main(String[] args) {
 
 
 
-2. 
+2. 用Semaphore容器，思路是定义三个该容器，两两交叉互相释放（返还）对方的令牌；代码如下：
+
+   ```java
+   	private static Semaphore sepA = new Semaphore(1);
+       private static Semaphore sepB = new Semaphore(0);
+       private static Semaphore sepC = new Semaphore(0);
+       private static void test2() {
+           // A线程
+           new Thread(() -> {
+               try {
+                   for (int i = 0; i < 10; i++) {
+                       // 取A的令牌
+                       sepA.acquire();
+                       System.out.println("i = " + (i+1) + "--A");
+                       // 返还B的令牌
+                       sepB.release();
+                   }
+               } catch (Exception e) {
+                   e.printStackTrace();
+               }
+           }).start();
+   		
+           // B线程
+           new Thread(() -> {
+               try {
+                   for (int i = 0; i < 10; i++) {
+                       // 获取B的令牌，A执行完才有B的令牌
+                       sepB.acquire();
+                       System.out.println("i = " + (i+1) + "--B");
+                       // 释放C的令牌
+                       sepC.release();
+                   }
+               } catch (Exception e) {
+                   e.printStackTrace();
+               }
+           }).start();
+   
+           new Thread(() -> {
+               try {
+                   for (int i = 0; i < 10; i++) {
+                       // 获取C的令牌，B执行完才有C的令牌
+                       sepC.acquire();
+                       System.out.println("i = " + (i+1) + "--C");
+                       // 释放A的令牌，进入下一次循环
+                       sepA.release();
+                   }
+               } catch (Exception e) {
+                   e.printStackTrace();
+               }
+           }).start();
+       }
+   ```
+
+   效果如下：
+
+   ```
+   i = 1--A
+   i = 1--B
+   i = 1--C
+   i = 2--A
+   i = 2--B
+   i = 2--C
+   i = 3--A
+   i = 3--B
+   i = 3--C
+   i = 4--A
+   i = 4--B
+   i = 4--C
+   ....
+   ```
+
+
+
+##	CountDownLatch源码分析
+
