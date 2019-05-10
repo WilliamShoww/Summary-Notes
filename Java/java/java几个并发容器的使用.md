@@ -338,3 +338,80 @@ public static void main(String[] args) {
 
 ##	CountDownLatch源码分析
 
+删掉注释，发现该类的代码很少，如下：
+
+```java
+
+package java.util.concurrent;
+import java.util.concurrent.locks.AbstractQueuedSynchronizer;
+
+public class CountDownLatch {
+    /**
+     * Synchronization control For CountDownLatch.
+     * Uses AQS state to represent count.
+     * 用于CountDownLatch的同步控制，使用AQS状态表示计数
+     */
+    private static final class Sync extends AbstractQueuedSynchronizer {
+        private static final long serialVersionUID = 4982264981922014374L;
+
+        Sync(int count) {
+            setState(count);
+        }
+
+        int getCount() {
+            return getState();
+        }
+
+        protected int tryAcquireShared(int acquires) {
+            return (getState() == 0) ? 1 : -1;
+        }
+
+        protected boolean tryReleaseShared(int releases) {
+            // Decrement count; signal when transition to zero
+            for (;;) {
+                int c = getState();
+                if (c == 0)
+                    return false;
+                int nextc = c-1;
+                if (compareAndSetState(c, nextc))
+                    return nextc == 0;
+            }
+        }
+    }
+
+    private final Sync sync;
+
+    /**
+     * CountDownLatch 的代码如下
+     */
+    public CountDownLatch(int count) {
+        if (count < 0) throw new IllegalArgumentException("count < 0");
+        this.sync = new Sync(count);
+    }
+
+    public void await() throws InterruptedException {
+        sync.acquireSharedInterruptibly(1);
+    }
+
+    public boolean await(long timeout, TimeUnit unit)
+        throws InterruptedException {
+        return sync.tryAcquireSharedNanos(1, unit.toNanos(timeout));
+    }
+
+    public void countDown() {
+        sync.releaseShared(1);
+    }
+    
+    public long getCount() {
+        return sync.getCount();
+    }
+}
+
+```
+
+发现`CountDownLatch`的代码没啥看的，只是包装了一个API供调用，*在这里很**疑惑**为什么不直接暴露`Sync`而要再次包装一层* ，希望有人解答一下。
+
+所以我们看一下`Sync`类做了什么，第一眼看到的是继承了`AbstractQueuedSynchronizer`类，该类就是同步容器`AQS`。所以说`CountDownLatch`的其实是基于`AQS`。对于AQS鉴于篇幅过长，暂不讲述。
+
+##	CyclicBarrier源码分析
+
