@@ -565,3 +565,231 @@ public class CountDownLatch {
 
 ###	Semaphore的源码浅析
 
+###	内部类
+
+```java
+    // 又是基于AQS的实现
+	abstract static class Sync extends AbstractQueuedSynchronizer {
+        private static final long serialVersionUID = 1192457210091910933L;
+
+        Sync(int permits) {
+            setState(permits);
+        }
+
+        final int getPermits() {
+            return getState();
+        }
+		
+        // 非公平的获取许可认证
+        final int nonfairTryAcquireShared(int acquires) {
+            for (;;) {
+                int available = getState();
+                int remaining = available - acquires;
+                if (remaining < 0 || // 就因为没有剩余判断就非公平，为啥？求解释
+                    compareAndSetState(available, remaining))
+                    return remaining;
+            }
+        }
+		
+        // 释放许可认证
+        protected final boolean tryReleaseShared(int releases) {
+            for (;;) {
+                int current = getState();
+                int next = current + releases;
+                if (next < current) // overflow
+                    throw new Error("Maximum permit count exceeded");
+                if (compareAndSetState(current, next))
+                    return true;
+            }
+        }
+		
+        // 减少许可认证
+        final void reducePermits(int reductions) {
+            for (;;) {
+                int current = getState();
+                int next = current - reductions;
+                if (next > current) // underflow
+                    throw new Error("Permit count underflow");
+                if (compareAndSetState(current, next))
+                    return;
+            }
+        }
+		
+        // 清空许可认证
+        final int drainPermits() {
+            for (;;) {
+                int current = getState();
+                if (current == 0 || compareAndSetState(current, 0))
+                    return current;
+            }
+        }
+    }
+
+    /**
+     * NonFair version
+     */
+    static final class NonfairSync extends Sync {
+        private static final long serialVersionUID = -2694183684443567898L;
+
+        NonfairSync(int permits) {
+            super(permits);
+        }
+
+        protected int tryAcquireShared(int acquires) {
+            return nonfairTryAcquireShared(acquires);
+        }
+    }
+
+    /**
+     * Fair version
+     */
+    static final class FairSync extends Sync {
+        private static final long serialVersionUID = 2014338818796000944L;
+
+        FairSync(int permits) {
+            super(permits);
+        }
+
+        protected int tryAcquireShared(int acquires) {
+            for (;;) {
+                if (hasQueuedPredecessors())
+                    return -1;
+                int available = getState();
+                int remaining = available - acquires;
+                if (remaining < 0 ||
+                    compareAndSetState(available, remaining))
+                    return remaining;
+            }
+        }
+    }
+```
+
+发现这些内部类又是基于`AQS`的实现。
+
+
+
+###	构造方法
+
+```java
+    public Semaphore(int permits) {
+        sync = new NonfairSync(permits);
+    }
+
+    public Semaphore(int permits, boolean fair) {
+        sync = fair ? new FairSync(permits) : new NonfairSync(permits);
+    }
+```
+
+构造方法比较简单，就两个。通过构造方法发现默认是非公平实现，要公平实现一定要构造方法中指明。
+
+###	acquire和release方法
+
+```java
+    public void acquire() throws InterruptedException {
+        sync.acquireSharedInterruptibly(1);
+    }
+
+    public void acquire(int permits) throws InterruptedException {
+        if (permits < 0) throw new IllegalArgumentException();
+        sync.acquireSharedInterruptibly(permits);
+    }
+
+    public void acquireUninterruptibly() {
+        sync.acquireShared(1);
+    }
+
+    public void acquireUninterruptibly(int permits) {
+        if (permits < 0) throw new IllegalArgumentException();
+        sync.acquireShared(permits);
+    }
+
+    public boolean tryAcquire() {
+        return sync.nonfairTryAcquireShared(1) >= 0;
+    }
+
+    public boolean tryAcquire(int permits) {
+        if (permits < 0) throw new IllegalArgumentException();
+        return sync.nonfairTryAcquireShared(permits) >= 0;
+    }
+
+    public boolean tryAcquire(long timeout, TimeUnit unit)
+        throws InterruptedException {
+        return sync.tryAcquireSharedNanos(1, unit.toNanos(timeout));
+    }
+
+
+    public boolean tryAcquire(int permits, long timeout, TimeUnit unit)
+        throws InterruptedException {
+        if (permits < 0) throw new IllegalArgumentException();
+        return sync.tryAcquireSharedNanos(permits, unit.toNanos(timeout));
+    }
+
+    public void release() {
+        sync.releaseShared(1);
+    }
+
+    public void release(int permits) {
+        if (permits < 0) throw new IllegalArgumentException();
+        sync.releaseShared(permits);
+    }
+```
+
+每一个`acquire`和`release`都有两个，一个是默认获取/释放一个令牌和获取/释放自定义数量令牌。
+
+
+
+## 	总结
+
+最后我们发现其实我们可以基与`ReentrantLock`和`Condition`再实现等待一起执行，代码如下：
+
+```java
+    public static void main(String[] args) throws InterruptedException {
+        thread();
+        System.out.println("before sleep");
+        Thread.sleep(20000);
+        System.out.println("after sleep");
+        thread();
+    }
+
+    private static ReentrantLock lock = new ReentrantLock();
+    private static Condition condition = lock.newCondition();
+    private static volatile Integer count = 2;
+
+    private static void thread() {
+        new Thread(() -> {
+            try {
+                lock.lock();
+                System.out.println(Thread.currentThread().getName() + " Start");
+                if (count > 1) {
+                    count--;
+                    condition.await();
+                } else {
+                    condition.signalAll();
+                }
+                System.out.println(Thread.currentThread().getName() + " Run");
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                lock.unlock();
+            }
+
+        }).start();
+    }
+```
+
+效果如下：
+
+```
+before sleep
+Thread-0 Start
+after sleep
+Thread-1 Start
+Thread-1 Run
+Thread-0 Run
+```
+
+线程0 会等待 线程1 Start 之后开始一起执行
+
+**发现`AQS`在多线程和并发控制地位非常重要，离不开它的身影。**
+
+本人没有仔细观看`AQS`的源码，所以没有解释和`AQS`相关的方法功能以及作用，后面有时间看了`AQS`源码后再来补全吧。还有用词不准确的地方希望大家指出。只是通过这么一个面试题，学习了一下线程之间控制的方法方式。
