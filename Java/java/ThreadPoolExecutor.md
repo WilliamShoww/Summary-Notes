@@ -86,7 +86,7 @@ public ThreadPoolExecutor(int corePoolSize,
 1. `corePoolSize` 核心线程数
 2. `maximumPoolSize` 最大线程数
 3. `workQueue` 工作队列（任务队列）,是否会执行拒绝策略
-4. `keepAliveTime` 大于核心线程数的线程，空闲存留时间
+4. `keepAliveTime` 空闲线程的存留时间
 5. `threadFactory` 工作线程创建工厂类 ，默认是`Executors.defaultThreadFactory()`
 6. `handler` 拒绝策略，默认是`AbortPolicy` ,线程池中自带的拒绝策略有：
    1. `AbortPolicy` 抛弃当前新任务并抛出异常
@@ -407,5 +407,10 @@ private boolean addWorker(Runnable firstTask, boolean core) {
 
 ##	总结
 
+线程池的实现主要还是根据生产者/消费者模式的实现，主体流程如下：
 
+![](./../../resource/ThreadPoolExecutor03.png)
+
+1. 主体流程就是一个标准的消费者/观察者模式，当队列为空时任务线程`await`在阻塞队列中，有新任务提交再`signal`任务线程
+2. 当第一次新建任务线程的时候，任务基本不会提交到工作队列中，而是直接交给任务线程去执行
 
