@@ -226,7 +226,7 @@ private boolean addWorker(Runnable firstTask, boolean core) {
 
 `workerCountOf` 方法是获取当前工作线程数
 
-`addWorker` 方法判断是否可以添加一个`Worker`线程，如果可以就新增一个线程并且start它
+**`addWorker` 方法判断是否可以添加一个`Worker`线程，如果可以就新增一个线程并且start它**
 
 第二个判断的代码如下：
 
@@ -242,7 +242,7 @@ private boolean addWorker(Runnable firstTask, boolean core) {
 
 `isRunning(c)` 判断线程池的状态是否是RUNNING状态
 
-`workQueue.offer(command)` 向队列中添加任务，如果失败说明队列已满，拒绝添加。可以去查看`ArrayBlockingQueue` 和`LinkedBlockingQueue`的源码
+**`workQueue.offer(command)` 向队列中添加任务，如果失败说明队列已满，拒绝添加。可以去查看**`ArrayBlockingQueue` 和`LinkedBlockingQueue`的源码
 
 第三个判断代码如下：
 
@@ -397,7 +397,7 @@ private boolean addWorker(Runnable firstTask, boolean core) {
 
 4. 在执行`task.run()`的前后分别会执行`ThreadPoolExecutor`的 `beforeExecute(wt, task)`和`afterExecute(task, thrown)` 两个`protected`方法，默认是空实现
 
-5. ***最重要的是：***这一句`while (task != null || (task = getTask()) != null)`中的`getTask()`
+5.  **最重要的是：** 这一句`while (task != null || (task = getTask()) != null)`中的`getTask()`
 
    这个方法是从工作队列`workQueue`中`take`一个任务，如果队列为空则会`await`直到队列中有新的任务
 
@@ -413,4 +413,3 @@ private boolean addWorker(Runnable firstTask, boolean core) {
 
 1. 主体流程就是一个标准的消费者/观察者模式，当队列为空时任务线程`await`在阻塞队列中，有新任务提交再`signal`任务线程
 2. 当第一次新建任务线程的时候，任务基本不会提交到工作队列中，而是直接交给任务线程去执行
-

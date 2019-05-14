@@ -415,3 +415,150 @@ public class CountDownLatch {
 
 ##	CyclicBarrier源码分析
 
+我们看一下几个重要的方法代码
+
+###	字段和构造方法
+
+```java
+    /** The lock for guarding barrier entry */
+    private final ReentrantLock lock = new ReentrantLock();
+    /** Condition to wait on until tripped */
+    private final Condition trip = lock.newCondition();
+
+	/** The number of parties */
+    private final int parties;
+    /* The command to run when tripped */
+    private final Runnable barrierCommand;
+	/**
+     * Number of parties still waiting. Counts down from parties to 0
+     * on each generation.  It is reset to parties on each new
+     * generation or when broken.
+     */
+    private int count;
+	public CyclicBarrier(int parties) {
+        this(parties, null);
+    }    
+
+	public CyclicBarrier(int parties, Runnable barrierAction) {
+        if (parties <= 0) throw new IllegalArgumentException();
+        this.parties = parties;
+        this.count = parties;
+        this.barrierCommand = barrierAction;
+    }
+```
+
+`parties`  等待线程群组数，不知道这个翻译对不对
+
+`barrierCommand` 
+
+`count` 
+
+构造方法没什么说的，初始化配置参数
+
+###	await方法
+
+代码如下：
+
+```java
+    public int await() throws InterruptedException, BrokenBarrierException {
+        try {
+            return dowait(false, 0L);
+        } catch (TimeoutException toe) {
+            throw new Error(toe); // cannot happen
+        }
+    }
+
+    public int await(long timeout, TimeUnit unit)
+        throws InterruptedException,
+               BrokenBarrierException,
+               TimeoutException {
+        return dowait(true, unit.toNanos(timeout));
+    }
+
+    private int dowait(boolean timed, long nanos)
+        throws InterruptedException, BrokenBarrierException,
+               TimeoutException {
+        final ReentrantLock lock = this.lock;
+        lock.lock();
+        try {
+            final Generation g = generation;
+			// 默认是false 如果为true说明打破屏障了，线程已经运行了
+            if (g.broken)
+                throw new BrokenBarrierException();
+
+            if (Thread.interrupted()) {
+                // 当前线程（用户线程）是否被打断
+                breakBarrier();
+                throw new InterruptedException();
+            }
+			
+            // 每调用一次改方法，count 自减1
+            int index = --count;
+            if (index == 0) {  
+                // tripped 如果count 为0 线程开始执行
+                boolean ranAction = false;
+                try {
+                    final Runnable command = barrierCommand;
+                    if (command != null)
+                        command.run();
+                    ranAction = true;
+                    // 唤醒所有的等待线程并且重置容器配置
+                    nextGeneration();
+                    return 0;
+                } finally {
+                    if (!ranAction)
+                        // 如果上面唤醒失败 打破屏障，唤醒所有线程
+                        breakBarrier();
+                }
+            }
+
+            // loop until tripped, broken, interrupted, or timed out
+            // 一直循环等待
+            for (;;) {
+                try {
+                    if (!timed)
+                        // 没有超时设置 当前线程等待
+                        trip.await();
+                    else if (nanos > 0L)
+                        // 没有超时设置 当前线程时效等待
+                        nanos = trip.awaitNanos(nanos);
+                } catch (InterruptedException ie) {
+                    if (g == generation && ! g.broken) {
+                        breakBarrier();
+                        throw ie;
+                    } else {
+                        // We're about to finish waiting even if we had not
+                        // been interrupted, so this interrupt is deemed to
+                        // "belong" to subsequent execution.
+                        Thread.currentThread().interrupt();
+                    }
+                }
+
+                if (g.broken)
+                    throw new BrokenBarrierException();
+
+                if (g != generation)
+                    return index;
+
+                if (timed && nanos <= 0L) {
+                    // 等待超时 打破屏障唤醒所有线程
+                    breakBarrier();
+                    throw new TimeoutException();
+                }
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+	
+	/**
+	* 打破屏障，singnal所有线程，运行
+	*/
+    private void breakBarrier() {
+        generation.broken = true;
+        count = parties;
+        trip.signalAll();
+    }
+```
+
+两个`public`方法都最终调用的是`private`方法，具体解释看代码片段注释。从源码中我们可以发现`CyclicBarrier`的实现原理是基于`ReentrantLock 和 `Condition` 的实现，这两玩意是什么，自行百度。其实和 对象的`await`  和 `notify/notifyAll` 方法类似的功能，而`ReentrantLock` 和 `Condition` 又有一部分是基于 `AQS`实现的。此时是不是会发现`AQS`在并发控制和多线程的地位很高，有时间该去分析一下它的源码
