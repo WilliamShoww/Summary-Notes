@@ -8,33 +8,33 @@
 
 2. **Redis的数据结构有哪些？及应用场景**
 
-   1. String(key/value)结构  	
+   1. `String(key/value)`结构  	
 
-      **常用命令: ** set,get,decr,incr,mget 
+      **常用命令: ** `set,get,decr,incr,mget `
 
       **应用场景：**简单的key/value数据
 
-   2. Hash  
+   2. `Hash `
 
-      **常用命令：**hget,hset,hgetall
+      **常用命令：**`hget,hset,hgetall`
 
       **应用场景：**字典结构或对象，需要修改/获取某个字段/Key，不需要序列化和反序列化
 
-   3. List  
+   3. `List `
 
-      **常用命令：**lpush,rpush,lpop,rpop,lrange等
+      **常用命令：**`lpush,rpush,lpop,rpop,lrange`等
 
       **应用场景：**列表，如好友列表、粉丝列表等
 
-   4. Set
+   4. `Set`
 
-      **常用命令：**sadd,spop,smembers,sunion
+      **常用命令：**`sadd,spop,smembers,sunion`
 
       **应用场景：**不重复列表，
 
-   5. Sorted Set
+   5. `Sorted Set`
 
-      **常用命令：**zadd,zrange,zrem,zcard
+      **常用命令：**`zadd,zrange,zrem,zcard`
 
       **应用场景：**有序列表，如：排行榜等功能
 
@@ -47,7 +47,7 @@
 
    **解决阻塞的方法：**
 
-   ​	
+   ​	SCAN命令
 
 4. **Redis的发布订阅及产生的风险**
 
@@ -70,3 +70,4 @@
    a.惰性删除   只有操作一个过期key的时候就会删除
 
    b.定期删除   只有超过redis最大内存的时候才会触发，删除基于LRU算法：距最后使用的时间越长的删除
+
