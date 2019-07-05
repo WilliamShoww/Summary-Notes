@@ -33,6 +33,8 @@
 7. `Free Mybatis plugin`  mybatis代码一键到对应xml的插件
 8. `Translate` 翻译插件，使用：窗口右上角点击翻译图标
 9. `A8Translate` 英文翻译插件，使用：Alt+t
+10. `.ignore` 将文件添加到git的忽略文件列表中
+11. `SequenceDiagram` 生成函数时序图
 
 
 
