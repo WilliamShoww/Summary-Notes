@@ -1,0 +1,112 @@
+
+<configuration debug="true" scan="true" scanPeriod="1 seconds">
+    <contextName>logback</contextName>
+    <!--定义参数,后面可以通过${app.name}使用-->
+    <property name="app.name" value="bbs"/>
+    <property name="log.path" value="/logs"/>
+    <!--ConsoleAppender 用于在屏幕上输出日志-->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <!--定义了一个过滤器,在LEVEL之下的日志输出不会被打印出来-->
+        <!--这里定义了DEBUG，也就是控制台不会输出比ERROR级别小的日志-->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+        <!-- encoder 默认配置为PatternLayoutEncoder -->
+        <!--定义控制台输出格式-->
+        <encoder>
+            <pattern>%d [%thread] %highlight(%-5level) %logger{36} [%file : %line] - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!--输出DEBUG日志到文件-->
+    <appender name="DEBUG_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!--定义日志输出的路径-->
+        <file>${log.path}/debug/${app.name}.log</file>
+
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>DEBUG</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <!--定义日志滚动的策略-->
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!--定义文件滚动时的文件名的格式-->
+            <fileNamePattern>${log.path}/debug/${app.name}.%d{yyyy-MM-dd-HH-MM}_%i.log</fileNamePattern>
+            <maxFileSize>500MB</maxFileSize>
+            <!--60天的时间周期，日志量最大20GB-->
+            <maxHistory>30</maxHistory>
+            <!-- 该属性在 1.1.6版本后 才开始支持-->
+            <totalSizeCap>20GB</totalSizeCap>
+        </rollingPolicy>
+        <!--定义输出格式-->
+        <encoder>
+            <pattern>%d [%thread] %highlight(%-5level) %logger{36} [%file : %line] - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!--输出INFO日志到文件-->
+    <appender name="INFO_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!--定义日志输出的路径-->
+        <file>${log.path}/${app.name}.log</file>
+
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>NEUTRAL</onMismatch>
+        </filter>
+        <!--定义日志滚动的策略-->
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!--定义文件滚动时的文件名的格式-->
+            <fileNamePattern>${log.path}/${app.name}.%d{yyyy-MM-dd-HH-MM}_%i.log</fileNamePattern>
+            <maxFileSize>200MB</maxFileSize>
+            <!--60天的时间周期，日志量最大20GB-->
+            <maxHistory>30</maxHistory>
+            <!-- 该属性在 1.1.6版本后 才开始支持-->
+            <totalSizeCap>20GB</totalSizeCap>
+        </rollingPolicy>
+        <!--定义输出格式-->
+        <encoder>
+            <pattern>%d [%thread] %highlight(%-5level) %logger{36} [%file : %line] - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!--输出到文件的日志-->
+    <appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!--定义日志输出的路径-->
+        <!--这里的 没有在上面的配置中设定，所以会使用java启动时配置的值-->
+        <file>${log.path}/error/${app.name}_error.log</file>
+        <!--级别过滤器 日志级别等于配置级别-->
+        <!--<filter class="ch.qos.logback.classic.filter.LevelFilter">
+                         <level>WARN</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>NEUTRAL</onMismatch>
+        </filter>-->
+        <!--临界值过滤器 日志级别大于等于配置的级别-->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>WARN</level>
+        </filter>
+        <!--定义日志滚动的策略-->
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!--定义文件滚动时的文件名的格式-->
+            <fileNamePattern>${log.path}/error/${app.name}_error.%d{yyyy-MM-dd-HH-MM}_%i.log</fileNamePattern>
+            <maxFileSize>50MB</maxFileSize>
+            <!--60天的时间周期，日志量最大20GB-->
+            <maxHistory>30</maxHistory>
+            <!-- 该属性在 1.1.6版本后 才开始支持-->
+            <totalSizeCap>20GB</totalSizeCap>
+        </rollingPolicy>
+        <!--定义输出格式-->
+        <encoder>
+            <pattern>%d [%thread] %-5level %logger{36} [%file : %line] - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!--root是默认的logger 这里设定输出级别是debug-->
+    <root level="DEBUG">
+        <!--定义了两个appender，日志会通过往这两个appender里面写-->
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="DEBUG_FILE"/>
+        <appender-ref ref="INFO_FILE"/>
+        <appender-ref ref="ERROR_FILE"/>
+    </root>
+</configuration>
