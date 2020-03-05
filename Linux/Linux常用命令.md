@@ -34,7 +34,7 @@
    java -server -Xms2048m -Xmx2048m -XX:MetaspaceSize=128m  -XX:+PrintGCDetails -cp ${cur_path}/:${cur_path}/config/*:${cur_path}/se-lib/*:${cur_path}/lib/*:${cur_path}/bbs.jar com.leixing.bbs.BBSApplication
    ```
 
-   **注意的是：** 多个路径下的jar包之间，linux 用`:`隔开，windows 用`.;`隔开
+   **注意的是：** 多个路径下的jar包之间，linux 用`:`隔开，windows 用`.;`隔开（windows 未亲自手动验证）
 
    
 
@@ -58,3 +58,40 @@ nohup命令：如果你正在运行一个进程，而且你觉得在退出帐户
 2. 用途二：后台运行程序；用法：nohup Command & 。
 
 *详情：自行搜索*
+
+
+
+##		VIM
+
+###		查找
+
+```shell
+/keyword         //按默认方向查找关键字
+?keyword         //按与默认方向相反的方向查找关键字
+n                //按与之前相同的查找顺序匹配下一个出现相同关键字的位置
+N                //按与之前相反的查找顺序匹配下一个出现相同关键字的位置   　　　　　　　
+				 //用户也可以通过Ctrl + o 和 Ctrl + i 进行位置的切换
+```
+
+
+
+###	显示/隐藏行号
+
+命令:	`:set number` 显示行号
+
+命令： `:set nonumber` 隐藏行号
+
+###		移动
+
+上一页：Ctr+f
+
+下一页：Ctr+b
+
+首行：gg
+
+尾行：G
+
+n行：nG
+
+返回上一次光标的位置：Ctr+o
+

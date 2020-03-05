@@ -50,3 +50,18 @@
 2. tomcat启动配置中的`VM options` 设置为：-Dfile.encoding=UTF-8
 3. IDEA 配置文件中，`bin`目录下 的`idea64.exe.vmoptions` 和 `idea.exe.vmoptions`(32位的时候) 添加配置项目`-Dfile.encoding=UTF-8`
 
+
+
+##	不自动提示的问题
+
+###		开启了省电模式
+
+该模式下，不会任何提示，解决办法: `File |Power Save Model `
+
+###		缓存问题
+
+该问题的现象可能是莫名其妙的，部分类提示，部分类不提示。解决办法：`File | Invalidate and Restart`
+
+###		配色问题
+
+目前自己没遇到过，看别人博客遇到过，更换一下配色
