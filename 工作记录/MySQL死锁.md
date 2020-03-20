@@ -41,7 +41,7 @@ void update(userId, numData){
     if(null == userData){
         // 初始化且合并数据
         merge(userData,numData);
-        save(userData)
+        save(userData);
     }
     // 合并数据
     merge(userData,numData);
@@ -64,7 +64,7 @@ void update(userId, numData){
     if(null == userData){
         // 初始化且合并数据
         merge(userData,numData);
-        save(userData)
+        save(userData);
     }
     // 合并数据
     merge(userData,numData);
@@ -72,7 +72,9 @@ void update(userId, numData){
 }
 ```
 
+死锁原因(普通的交叉)：
 
+![1584695993008](./assets/1584695993008.png)
 
 ##		总结
 
