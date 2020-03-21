@@ -2,7 +2,7 @@
 
 **背景：**最近在做一个新项目，服务端一个人承担；也是第一次，一个人承担服务端并且从0开始做的项目。整个项目因为处于demo阶段，所以是个单体项目。项目技术栈：spring boot 全家桶 + mybatis-plus。为了快也懒得写文档。文档生成用的是：swagger-bootstrap-ui 框架。整个项目的架构如下图：
 
-![](./res/server.png)
+![](./assets/server.png)
 
 **过程中的感受：**在写响应前端的Model和接收VO的时候，发现和DATA层的POJO老是在重复写代码，拷贝对象字段。
 
