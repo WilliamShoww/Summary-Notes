@@ -400,7 +400,7 @@ private void triggerAfterCompletion(DefaultTransactionStatus status, int complet
     void save(User user);
 ```
 
-**结果发现并没有用，顿时觉得这个事务回调不知道具体什么情况，感觉afterCompletion方法调用是在代码commit之后执行，但是此时数据库中事务有没有commit不知道，希望有牛人解答一下**。
+**结果发现并没有用，顿时觉得这个事务回调不知道具体什么情况，感觉afterCompletion方法调用是在代码commit之后执行，但是此时数据库中事务有没有commit不知道，希望有牛人解答一下(其实不是Spring的锅，请看后续内容，该段误人子弟了)**。
 
 ##		Sharding JDBC 读写分离的插曲
 
@@ -506,6 +506,10 @@ private void triggerAfterCompletion(DefaultTransactionStatus status, int complet
 ##	总结
 
 解决问题，方案可能很多，但是个人觉得遇到问题，应该去弄懂问题的原理。就像这次经历，解决问题的过程很曲折，虽然已经有备用方案了，但是还是坚持下来了。
+
+##		后续
+
+这件事情，又经过了几天，有朋友讨论mybatis的一级缓存，突然脑洞，想起来了。这里开启了事务，所以会使用到Mybatis的一级缓存（在Spring中只有开启事务才会使用到一级缓存）。想到一个Mybatis会不会对for update 更新做特殊操作，不走缓存。后来验证果然如此，这时就一切都能解释的通了。详情见我文章[Mybatis一级缓存的坑]()
 
 
 
