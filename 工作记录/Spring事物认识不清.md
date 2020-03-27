@@ -509,7 +509,7 @@ private void triggerAfterCompletion(DefaultTransactionStatus status, int complet
 
 ##		后续
 
-这件事情，又经过了几天，有朋友讨论mybatis的一级缓存，突然脑洞，想起来了。这里开启了事务，所以会使用到Mybatis的一级缓存（在Spring中只有开启事务才会使用到一级缓存）。想到一个Mybatis会不会对for update 更新做特殊操作，不走缓存。后来验证果然如此，这时就一切都能解释的通了。详情见我文章[Mybatis一级缓存的坑]()
+这件事情，又经过了几天，有朋友讨论mybatis的一级缓存，突然脑洞，想起来了。这里开启了事务，所以会使用到Mybatis的一级缓存（在Spring中只有开启事务才会使用到一级缓存）。想到一个Mybatis会不会对for update 更新做特殊操作，不走缓存。后来验证果然如此，这时就一切都能解释的通了。详情见我文章[Mybatis一级缓存的坑](https://gitee.com/cfacebook/Summary-Notes/blob/master/%E5%B7%A5%E4%BD%9C%E8%AE%B0%E5%BD%95/Mybatis%E4%B8%80%E7%BA%A7%E7%BC%93%E5%AD%98%E7%9A%84%E5%9D%91.md)
 
 
 

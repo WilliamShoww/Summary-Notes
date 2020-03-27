@@ -2,7 +2,7 @@
 
 ##		前序
 
-接着上篇文章[插入唯一数据的各种问题]([https://gitee.com/cfacebook/Summary-Notes/blob/master/%E5%B7%A5%E4%BD%9C%E8%AE%B0%E5%BD%95/Spring%E4%BA%8B%E7%89%A9%E8%AE%A4%E8%AF%86%E4%B8%8D%E6%B8%85.md](https://gitee.com/cfacebook/Summary-Notes/blob/master/工作记录/Spring事物认识不清.md))。中间过程说Spring的事务，是不是在生命周期的时候程序提交了事务，但是数据库没有提交事务。其实不会的，当时写文章的时候只是根据当时的现象去推测，后来我用代码测试实际是会提交事务的。Spring是没有错的。代码如下：
+接着上篇文章[插入唯一数据的各种问题](https://gitee.com/cfacebook/Summary-Notes/blob/master/工作记录/Spring事物认识不清.md)。中间过程说Spring的事务，是不是在生命周期的时候程序提交了事务，但是数据库没有提交事务。其实不会的，当时写文章的时候只是根据当时的现象去推测，后来我用代码测试实际是会提交事务的。Spring是没有错的。代码如下：
 
 ```java
 @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.READ_COMMITTED)
