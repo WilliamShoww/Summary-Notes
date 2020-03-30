@@ -27,7 +27,17 @@
 </build>
 ```
 
-`Spring-boot` 项目如果用默认插件，`java` 输出环境老是会变到低于项目配置的`JDK`版本，可以不要用默认插件，改成上面的编译插件，并且指定目标和源码版本即可
+`Spring-boot` 项目如果用默认插件，`java` 输出环境老是会变到低于项目配置的`JDK`版本，可以不要用默认插件，改成上面的编译插件，并且指定目标和源码版本即可,解决该问题也可以用以下配置：
+
+```xml
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <encoding>UTF-8</encoding>
+        <java.version>1.8</java.version>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
+```
 
 
 
@@ -115,3 +125,46 @@
 **该插件的作用是：**能将依赖的`jar`包复制到统一的路径下，方便部署。
 
 详情使用自行百度。
+
+####	resources标签配置
+
+```xml
+	   <resources>
+            <resource>
+                <!-- 是否过滤 true过滤 -->
+                <filtering>true</filtering>
+                <!-- 路径最前面不要加斜杠，加了就会无效 -->
+                <directory>src/main/resources</directory>
+                <excludes>
+                    <exclude>application-dev.properties</exclude>
+                    <exclude>application-test.properties</exclude>
+                    <exclude>smart-doc.json</exclude>
+                </excludes>
+                <includes>
+                    <include>mapper/**</include>
+                    <include>logback.xml</include>
+                    <include>application.properties</include>
+                    <include>application-prod.properties</include>
+                </includes>
+            </resource>
+        </resources>
+```
+
+***注意的点是：路径的前面不要加斜杠，相对项目路径，加了斜杠或者全路径都会排除失败***
+
+####		war包插件
+
+```xml
+            <!--打成war包-->
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.2.2</version>
+                <configuration>
+                    <!-- 打包的时候排除文件或者文件夹 -->
+                    <packagingExcludes>**/application-dev.properties,**/application-test.properties,**/smart-doc.json</packagingExcludes>
+                </configuration>
+            </plugin>
+```
+
+***注意：warSourceExcludes 和 packagingExcludes 及写法和resources标签不一样***
+
