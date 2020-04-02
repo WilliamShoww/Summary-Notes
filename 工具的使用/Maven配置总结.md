@@ -58,6 +58,10 @@
                         <goals>
                             <goal>jar</goal>
                         </goals>
+                        <!-- 配置别名否则报错 -->
+                        <configuration>
+                            <classifier>before</classifier>
+                        </configuration>
                     </execution>
                 </executions>
                 <configuration>
@@ -73,7 +77,9 @@
                         </manifest>
                     </archive>
                     <excludes>
-                        <!-- 打包的时候过滤掉打包的文件 相对于target 的classes路径 -->
+                        <!-- 打包的时候过滤掉打包的文件 相对于target 的classes路径 
+						 因为这是在打包阶段排除文件资源
+						-->
                         <exclude>/*.properties</exclude>
                         <exclude>/*.xml</exclude>
                     </excludes>
@@ -86,6 +92,14 @@
 详细使用教程 自行百度，使用过程中遇到几个注意的点如下：
 
 1. 排除文件是相对于`classes`的路径，并不是项目的路径，特别是排除配置文件的时候，不是相对于`/resources/*` 而是去查看一下`classes` 的情况，再填写。
+2. `install` 的时候，可能会在测试类报错，第二次`install`的时候可能就不会报错了。
+3. 多阶段打包了，一定要配置别名，否则会报如下错误：
+
+```java
+Failed to execute goal org.apache.maven.plugins:maven-jar-plugin:3.0.0:jar (default) on project bbs-admin: You have to use a classifier to attach supplemental artifacts to the project instead of replacing them.
+```
+
+
 
 
 

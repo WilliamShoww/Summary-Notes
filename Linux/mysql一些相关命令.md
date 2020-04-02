@@ -14,6 +14,18 @@
 
 ```
 
+###		连接SQL命令
+
+```shell
+mysql -uroot -p7m38uzSrDMNkvS1DbVt1 -h192.168.0.81 -P3306
+#	-u 用户名
+#	-p 密码
+#	-h 连接IP
+#	-P 端口号
+```
+
+
+
 ##	SQL语句
 
 ```sql
