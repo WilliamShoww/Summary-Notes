@@ -57,4 +57,6 @@ SHOW OPEN TABLES;
 SHOW OPEN TABLES FROM {database};
 -- In_use列表示有多少线程正在使用某张表
 SHOW OPEN TABLES where In_use > 0;
+-- 授权语句
+
 ```
