@@ -57,6 +57,11 @@ SHOW OPEN TABLES;
 SHOW OPEN TABLES FROM {database};
 -- In_use列表示有多少线程正在使用某张表
 SHOW OPEN TABLES where In_use > 0;
--- 授权语句
-
+-- 查看语句优化器优化信息
+-- 先执行
+EXPLAIN EXTEND {sql}
+-- 后执行
+SHOW WARNINGS
+-- 同一个实例中跨库迁移整表数据
+RENAME TABLE db1.table1 TO db2.table2
 ```
