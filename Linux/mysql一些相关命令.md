@@ -59,7 +59,7 @@ SHOW OPEN TABLES FROM {database};
 SHOW OPEN TABLES where In_use > 0;
 -- 查看语句优化器优化信息
 -- 先执行
-EXPLAIN EXTEND {sql}
+EXPLAIN EXTENDED {sql}
 -- 后执行
 SHOW WARNINGS
 -- 同一个实例中跨库迁移整表数据
