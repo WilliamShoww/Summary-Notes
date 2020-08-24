@@ -5,13 +5,13 @@
 ###	启动命令
 
 ```shell
-
+systemctl start mysqld.service
 ```
 
 ###		重启命令
 
 ```shell
-
+systemctl restart mysqld.service
 ```
 
 ###		连接SQL命令
@@ -65,3 +65,17 @@ SHOW WARNINGS
 -- 同一个实例中跨库迁移整表数据
 RENAME TABLE db1.table1 TO db2.table2
 ```
+
+##		死锁排查
+
+```mysql
+# 得到死锁信息
+SHOW ENGINE INNODB STATUS;
+# 查询死锁的线程
+SHOW PROCESSLIST;
+# 目前死锁的线程号
+SELECT * FROM information_schema.INNODB_TRX;
+# 杀掉死锁线程
+KILL {thread_id};
+```
+

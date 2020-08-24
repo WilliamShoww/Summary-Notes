@@ -15,3 +15,4 @@
    可变不可变：String 不可变的，每次都创建一个对象
 
    线程安全与不安全：Builder线程不安全、String和Buffer线程安全
+
