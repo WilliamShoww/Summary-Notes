@@ -112,8 +112,31 @@ sudo su -l root
 ###		获取当前脚本的位置
 
 ```shell
-readlink -f "$0"
+readlink -f "$0" # 获取到的是全路径包括文件名
 ```
 
+###		获取文件名
 
+```shell
+# 格式
+basename [pathname] [suffix]
+# 用法实例
+basename /test/file.sh 		 # 得到file.sh
+basename /test/file.sh .sh 	 # 得到file
+basename $1 /test/file.sh aa # 得到file.sh
+```
+
+###		获取上一级目录
+
+```shell
+# 格式
+dirname [pathname]
+# 用法实例
+dirname file.sh				 # 得到 .
+dirname ./file.sh 	 		 # 得到 .
+dirname ~/test/test2/    	 # 得到 /home/xiaocf/test  其中/home/xiaocf/是我的家目录
+dirname ~/test/test2/file.sh # 得到 /home/xiaocf/test/test2 其中/home/xiaocf/是我的家目录
+```
+
+参考：[basename命令dirname命令和readlink -f命令的使用](https://blog.csdn.net/modi000/article/details/107001274) 
 
