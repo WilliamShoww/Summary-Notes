@@ -43,8 +43,57 @@
    ```shell
    ps uxfa | grep java | grep `pwd` | awk '{print $2}' | xargs kill -9
    ```
+   
+3. JAVA项目启动的脚本
 
+   ```shell
+   # 获取脚本的绝对路径
+   script_path=$(readlink -f '$0');
+   # 获取项目的home目录
+   project_home_dir=`dirname $script_path`;
+   echo "APP dir: $project_home_dir";
+   # 移除旧的日志文件
+   if [ ! -f "$project_home_dir/nohup.old" ];then
+   	echo "nohup.old file not exist."
+   else
+   	rm $project_home_dir/nohup.old -f;
+   	sleep 2;
+   	echo "Done rm nohup.old";
+   fi
+   # 备份目前的日志文件
+   if [ ! -f "$project_home_dir/nohup.out" ]; then
+   	echo "nohup.out file not exist."
+   else
+   	mv nohup.out nohup.old;
+   	sleep 2;
+   	echo "Done mv nohup.out to nohup.old";
+   fi
+   # 获取当前应用的PID
+   app_pid=`ps uxfa | grep java | grep $project_home_dir | awk '{print $2}'`;
+   # 有当前应用的PID，杀掉旧的进程
+   if [ $app_pid ]; then
+   	kill -9 $app_pid;
+   	sleep 6;
+   	echo "Done kill app: $app_pid";
+   else
+   	echo "This app not active"
+   fi
+   echo "Start doing.........................";
+   # JAVA启动参数
+   java_opts="-server -XX:+UseG1GC -Xms1024m -Xmx1024m -XX:G1HeapRegionSize=16m -XX:MetaspaceSize=512m -XX:MaxMetaspaceSize=512m -XX:+PrintGCDetails";
+   # 项目的类信息
+   project_class_opts="${project_home_dir}/se-lib/*:${project_home_dir}/lib/*:${project_home_dir}/xx.jar com.xx.xx.{mainclass}";
+   # 启动应用
+   nohup java $java_opts -cp $project_class_opts &
+   echo "Done Deploy";
+   sleep 2;
+   echo "Deploy sucsess.";
+   # 写入新启动的应用的PID
+   echo "This app new PID: $!" >> $project_home_dir/nohup.out;
+   tail -f nohup.out;
+   ```
 
+   
 
 ##		nohup
 
