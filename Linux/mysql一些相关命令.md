@@ -29,6 +29,10 @@ mysql -uroot -p7m38uzSrDMNkvS1DbVt1 -h192.168.0.81 -P3306
 ##	SQL语句
 
 ```sql
+-- 授权语句MySQL8.0开始不需要 尾巴的WITH GRANT OPTION，不然会报语法错误
+-- 授予建表权限的时候，需要同时给PROCESS权限，不然使用Navicat工具连接建表的时候会提示：
+-- 1227 - Access denied; you need (at least one of) the PROCESS privilege(s) for this operation 但是实际可以建表成功
+GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,ALTER,PROCESS,INDEX,LOCK TABLES ON [db].[table] TO '[username]'@'[host]';
 -- 开启事务
 BEGIN;
 -- 提交事务
